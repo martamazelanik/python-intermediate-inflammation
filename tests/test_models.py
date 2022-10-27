@@ -71,21 +71,27 @@ def test_daily_min_string():
         ),
         (
                 [[float('nan'), 0, 5], [float('nan'), float('nan'), float('nan')], [float('nan'), 0, 0]],
-                [[0, 0, 0], [0, 0, 0], [0, 0, 0]],
+                [[0, 0, 1], [0, 0, 0], [0, 0, 0]],
                 None,
         ),
         (
-                [[-5, -10, 1], [0, -20, 10], [-246, -3, 356]],
-                [[0, 0, 1], [0, 0, 1], [0, 0, 1]],
-                ValueError,
+                'hello',
+                None,
+                TypeError,
+        ),
+        (
+                3,
+                None,
+                TypeError,
         )
     ])
 def test_patient_normalise(test, expected, expect_raises):
-    """Test normalisation works for arrays of one and positive integers.
-           Assumption that test accuracy of two decimal places is sufficient."""
+    """Test normalisation works for arrays of one and positive integers."""
     from inflammation.models import patient_normalise
+    if isinstance(test, list):
+        test = np.array(test)
     if expect_raises is not None:
         with pytest.raises(expect_raises):
-            npt.assert_almost_equal(patient_normalise(np.array(test)), np.array(expected), decimal=2)
+            npt.assert_almost_equal(patient_normalise(test), np.array(expected), decimal=2)
     else:
-        npt.assert_almost_equal(patient_normalise(np.array(test)), np.array(expected), decimal=2)
+        npt.assert_almost_equal(patient_normalise(test), np.array(expected), decimal=2)
